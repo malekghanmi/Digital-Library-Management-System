@@ -1,0 +1,92 @@
+@model BibliothequeFront.Models.StatistiquesViewModel
+@{
+    ViewData["Title"] = "Tableau de Bord";
+}
+
+<!-- HERO -->
+<section class="hero-section">
+    <div class="hero-ornament">
+        <div class="hero-ornament-line"></div>
+        <div class="hero-ornament-diamond"></div>
+        <div class="hero-ornament-line"></div>
+    </div>
+    <h1 class="hero-title fade-in">
+        Bibliotheca<br/><span>Numerica</span>
+    </h1>
+    <p class="hero-subtitle fade-in-1">Système de gestion de bibliothèque — Architecture REST</p>
+</section>
+
+<div class="page-container" style="padding-top:0;">
+
+    <!-- STATS 3D -->
+    @if (Model != null)
+    {
+        <div class="stats-grid">
+            <div class="stat-card fade-in-1">
+                <div class="stat-number" data-target="@Model.TotalLivres">@Model.TotalLivres</div>
+                <div class="stat-label">Livres au catalogue</div>
+            </div>
+            <div class="stat-card fade-in-2">
+                <div class="stat-number" data-target="@Model.LivresDisponibles">@Model.LivresDisponibles</div>
+                <div class="stat-label">Exemplaires disponibles</div>
+            </div>
+            <div class="stat-card fade-in-3">
+                <div class="stat-number" data-target="@Model.TotalUtilisateurs">@Model.TotalUtilisateurs</div>
+                <div class="stat-label">Membres inscrits</div>
+            </div>
+            <div class="stat-card fade-in-4">
+                <div class="stat-number" data-target="@Model.TotalEmpruntsActifs">@Model.TotalEmpruntsActifs</div>
+                <div class="stat-label">Emprunts en cours</div>
+            </div>
+            <div class="stat-card fade-in-5" @(Model.TotalEmpruntsEnRetard > 0 ? "style=border-color:rgba(183,28,28,0.3)" : "")>
+                <div class="stat-number" style="@(Model.TotalEmpruntsEnRetard > 0 ? "color:#B71C1C" : "")" data-target="@Model.TotalEmpruntsEnRetard">@Model.TotalEmpruntsEnRetard</div>
+                <div class="stat-label">Retards</div>
+            </div>
+            <div class="stat-card fade-in-5">
+                <div class="stat-number" data-target="@Model.TotalArticles">@Model.TotalArticles</div>
+                <div class="stat-label">Articles scientifiques</div>
+            </div>
+        </div>
+    }
+    else
+    {
+        <div class="alert-biblio alert-info-biblio" style="margin-top:2rem;">
+            <span></span> Impossible de contacter l'API. Vérifiez que le projet <strong>BibliothequeAPI</strong> est démarré sur <code>https://localhost:7200</code>.
+        </div>
+    }
+
+    <!-- ACCÈS RAPIDE -->
+    <div style="margin-top:3rem;">
+        <div class="section-header">
+            <h2 class="section-title">Accès <span>rapide</span></h2>
+        </div>
+
+        <div style="display:grid; grid-template-columns:repeat(auto-fit,minmax(220px,1fr)); gap:1.25rem;">
+            <a asp-controller="Livres" asp-action="Create" class="quick-access-card" style="text-decoration:none;">
+                <div class="item-card" style="padding:2rem; text-align:center; cursor:pointer;">
+                    <div style="font-family:var(--font-display); font-size:1rem; color:var(--dark); letter-spacing:0.05em;">Ajouter un livre</div>
+                    <div style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:0.85rem; margin-top:0.25rem;">Cataloguer une nouvelle œuvre</div>
+                </div>
+            </a>
+            <a asp-controller="Utilisateurs" asp-action="Create" class="quick-access-card" style="text-decoration:none;">
+                <div class="item-card" style="padding:2rem; text-align:center; cursor:pointer;">
+                    <div style="font-family:var(--font-display); font-size:1rem; color:var(--dark); letter-spacing:0.05em;">Inscrire un membre</div>
+                    <div style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:0.85rem; margin-top:0.25rem;">Créer un compte utilisateur</div>
+                </div>
+            </a>
+            <a asp-controller="Emprunts" asp-action="Create" class="quick-access-card" style="text-decoration:none;">
+                <div class="item-card" style="padding:2rem; text-align:center; cursor:pointer;">
+                    <div style="font-family:var(--font-display); font-size:1rem; color:var(--dark); letter-spacing:0.05em;">Enregistrer un emprunt</div>
+                    <div style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:0.85rem; margin-top:0.25rem;">Prêter un livre à un membre</div>
+                </div>
+            </a>
+            <a asp-controller="Articles" asp-action="Create" class="quick-access-card" style="text-decoration:none;">
+                <div class="item-card" style="padding:2rem; text-align:center; cursor:pointer;">
+                    <div style="font-family:var(--font-display); font-size:1rem; color:var(--dark); letter-spacing:0.05em;">Ajouter un article</div>
+                    <div style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:0.85rem; margin-top:0.25rem;">Référencer une publication</div>
+                </div>
+            </a>
+        </div>
+    </div>
+
+</div>

@@ -1,0 +1,83 @@
+@model BibliothequeFront.Models.CreateLivreViewModel
+@{
+    bool isEdit = ViewBag.LivreId != null;
+    ViewData["Title"] = isEdit ? "Modifier le Livre" : "Ajouter un Livre";
+    int livreId = ViewBag.LivreId ?? 0;
+}
+
+<div class="page-container" style="max-width:800px;">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour au catalogue</a>
+    </div>
+
+    <div class="section-header">
+        <h1 class="section-title">@(isEdit ? "Modifier le" : "Ajouter un") <span>Livre</span></h1>
+    </div>
+
+    <form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@(isEdit ? livreId : 0)" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-card">
+
+            <div asp-validation-summary="ModelOnly" class="alert-biblio alert-error-biblio" style="display:@(ViewContext.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio" for="Titre">Titre *</label>
+                    <input asp-for="Titre" class="form-control-biblio" placeholder="Titre du livre" required />
+                    <span asp-validation-for="Titre" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
+
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio" for="Auteur">Auteur *</label>
+                    <input asp-for="Auteur" class="form-control-biblio" placeholder="Nom de l'auteur" required />
+                    <span asp-validation-for="Auteur" class="text-danger" style="font-size:0.8rem;"></span>
+                </div>
+
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio" for="ISBN">ISBN</label>
+                    <input asp-for="ISBN" class="form-control-biblio" placeholder="978-x-xxxx-xxxx-x" />
+                </div>
+
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio" for="Editeur">Éditeur</label>
+                    <input asp-for="Editeur" class="form-control-biblio" placeholder="Maison d'édition" />
+                </div>
+
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio" for="Genre">Genre</label>
+                    <input asp-for="Genre" class="form-control-biblio" placeholder="Roman, Sciences, Histoire…" />
+                </div>
+
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio" for="Categorie">Catégorie</label>
+                    <input asp-for="Categorie" class="form-control-biblio" placeholder="Catégorie" />
+                </div>
+
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio" for="AnneePublication">Année de publication</label>
+                    <input asp-for="AnneePublication" type="number" class="form-control-biblio" placeholder="2024" min="1000" max="2100" />
+                </div>
+
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio" for="NombreExemplaires">Nombre d'exemplaires</label>
+                    <input asp-for="NombreExemplaires" type="number" class="form-control-biblio" min="1" value="1" required />
+                </div>
+
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio" for="ImageCouverture">URL de la couverture</label>
+                    <input asp-for="ImageCouverture" class="form-control-biblio" placeholder="https://…" />
+                </div>
+
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio" for="Description">Description / Résumé</label>
+                    <textarea asp-for="Description" class="form-control-biblio" rows="4" placeholder="Présentation du livre…"></textarea>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:0.75rem; padding-top:1.5rem; border-top:1px solid rgba(201,168,76,0.15); margin-top:1rem;">
+                <button type="submit" class="btn-biblio btn-primary-biblio">@(isEdit ? "💾 Enregistrer les modifications" : "＋ Ajouter le livre")</button>
+                <a asp-action="Index" class="btn-biblio btn-outline-biblio">Annuler</a>
+            </div>
+        </div>
+    </form>
+</div>

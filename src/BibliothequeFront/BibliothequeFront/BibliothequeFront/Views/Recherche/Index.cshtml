@@ -1,0 +1,125 @@
+@model BibliothequeFront.Models.RechercheResultatViewModel
+@{
+    ViewData["Title"] = "Recherche";
+    ViewData["SearchQ"] = Model?.TermeRecherche ?? "";
+}
+
+<div class="page-container">
+    <div class="section-header">
+        <h1 class="section-title">Recherche <span>globale</span></h1>
+    </div>
+
+    <!-- Barre de recherche principale -->
+    <form method="get" style="margin-bottom:3rem;">
+        <div class="search-container" style="max-width:680px; margin:0 auto; padding:0.75rem 0.75rem 0.75rem 2rem;">
+            <input type="text" name="q" class="search-input" placeholder="Rechercher un livre, un article, un auteur…" value="@Model?.TermeRecherche" style="font-size:1.1rem;" autofocus />
+            <button type="submit" class="btn-biblio btn-primary-biblio" style="padding:0.65rem 1.5rem;">
+               Rechercher
+            </button>
+        </div>
+    </form>
+
+    @if (Model != null && !string.IsNullOrEmpty(Model.TermeRecherche))
+    {
+        <div class="alert-biblio alert-info-biblio" style="margin-bottom:2rem;">
+            Résultats pour <strong>"@Model.TermeRecherche"</strong> —
+            <strong>@Model.TotalLivres</strong> livre(s) et <strong>@Model.TotalArticles</strong> article(s) trouvé(s)
+        </div>
+
+        @if (Model.Livres.Any())
+        {
+            <div style="margin-bottom:3rem;">
+                <div class="section-header">
+                    <h2 class="section-title"> Livres <span>(@Model.TotalLivres)</span></h2>
+                </div>
+                <div class="content-grid">
+                    @foreach (var l in Model.Livres)
+                    {
+                        <div class="item-card">
+                            <div class="item-card-cover" style="height:140px;">
+                                <div class="item-card-cover-spine"></div>
+                            </div>
+                            <div class="item-card-body">
+                                <div class="item-card-title">@l.Titre</div>
+                                <div class="item-card-author">@l.Auteur</div>
+                                <div class="item-card-meta">
+                                    @if (!string.IsNullOrEmpty(l.Genre))
+                                    {
+                                        <span class="badge-biblio badge-genre">@l.Genre</span>
+                                    }
+                                    @if (l.ExemplairesDisponibles > 0)
+                                    {
+                                        <span class="badge-biblio badge-dispo">@l.ExemplairesDisponibles dispo.</span>
+                                    }
+                                    else
+                                    {
+                                        <span class="badge-biblio badge-indispo">Indisponible</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="item-card-actions">
+                                <a asp-controller="Livres" asp-action="Details" asp-route-id="@l.Id" class="btn-biblio btn-outline-biblio btn-sm-biblio">Voir</a>
+                                <a asp-controller="Livres" asp-action="Edit" asp-route-id="@l.Id" class="btn-biblio btn-gold-biblio btn-sm-biblio">Modifier</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (Model.Articles.Any())
+        {
+            <div>
+                <div class="section-header">
+                    <h2 class="section-title"> Articles <span>(@Model.TotalArticles)</span></h2>
+                </div>
+                <div class="content-grid">
+                    @foreach (var a in Model.Articles)
+                    {
+                        <div class="item-card">
+                            <div class="item-card-cover" style="height:100px; background:linear-gradient(135deg,#1A1410 0%,#1E3A5F 100%);">
+                                <div class="item-card-cover-spine" style="background:linear-gradient(180deg,#C9A84C,#9B7B2F,#C9A84C);"></div>
+                                <span style="font-size:2rem;"></span>
+                            </div>
+                            <div class="item-card-body">
+                                <div class="item-card-title">@a.Titre</div>
+                                <div class="item-card-author">@a.Auteur</div>
+                                <div class="item-card-meta">
+                                    @if (!string.IsNullOrEmpty(a.Domaine))
+                                    {
+                                        <span class="badge-biblio badge-genre">@a.Domaine</span>
+                                    }
+                                    @if (a.AnneePublication.HasValue)
+                                    {
+                                        <span class="badge-biblio" style="background:rgba(140,123,107,0.08);color:var(--taupe);border:1px solid rgba(140,123,107,0.2);">@a.AnneePublication</span>
+                                    }
+                                </div>
+                            </div>
+                            <div class="item-card-actions">
+                                <a asp-controller="Articles" asp-action="Details" asp-route-id="@a.Id" class="btn-biblio btn-outline-biblio btn-sm-biblio">Voir</a>
+                                <a asp-controller="Articles" asp-action="Edit" asp-route-id="@a.Id" class="btn-biblio btn-gold-biblio btn-sm-biblio">Modifier</a>
+                            </div>
+                        </div>
+                    }
+                </div>
+            </div>
+        }
+
+        @if (!Model.Livres.Any() && !Model.Articles.Any())
+        {
+            <div class="empty-state">
+                <div class="empty-state-icon"></div>
+                <div class="empty-state-title">Aucun résultat</div>
+                <p class="empty-state-text">Aucun livre ni article ne correspond à votre recherche "<em>@Model.TermeRecherche</em>".</p>
+            </div>
+        }
+    }
+    else if (Model != null && string.IsNullOrEmpty(Model.TermeRecherche))
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"></div>
+            <div class="empty-state-title">Entrez un terme de recherche</div>
+            <p class="empty-state-text">Recherchez parmi tous les livres et articles de la bibliothèque.</p>
+        </div>
+    }
+</div>

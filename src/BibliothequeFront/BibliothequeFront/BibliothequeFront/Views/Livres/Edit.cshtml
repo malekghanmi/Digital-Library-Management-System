@@ -1,0 +1,70 @@
+@model BibliothequeFront.Models.CreateLivreViewModel
+@{
+    ViewData["Title"] = "Modifier le Livre";
+    int livreId = ViewBag.LivreId ?? 0;
+}
+
+<div class="page-container" style="max-width:800px;">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Details" asp-route-id="@livreId" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour aux détails</a>
+    </div>
+
+    <div class="section-header">
+        <h1 class="section-title">Modifier le <span>Livre</span></h1>
+    </div>
+
+    <form asp-action="Edit" asp-route-id="@livreId" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-card">
+            <div asp-validation-summary="ModelOnly" class="alert-biblio alert-error-biblio" style="display:@(ViewContext.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio">Titre *</label>
+                    <input asp-for="Titre" class="form-control-biblio" required />
+                </div>
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio">Auteur *</label>
+                    <input asp-for="Auteur" class="form-control-biblio" required />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">ISBN</label>
+                    <input asp-for="ISBN" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Éditeur</label>
+                    <input asp-for="Editeur" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Genre</label>
+                    <input asp-for="Genre" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Catégorie</label>
+                    <input asp-for="Categorie" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Année de publication</label>
+                    <input asp-for="AnneePublication" type="number" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Nombre d'exemplaires</label>
+                    <input asp-for="NombreExemplaires" type="number" class="form-control-biblio" min="1" />
+                </div>
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio">URL de la couverture</label>
+                    <input asp-for="ImageCouverture" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio">Description</label>
+                    <textarea asp-for="Description" class="form-control-biblio" rows="4"></textarea>
+                </div>
+            </div>
+
+            <div style="display:flex; gap:0.75rem; padding-top:1.5rem; border-top:1px solid rgba(201,168,76,0.15); margin-top:1rem;">
+                <button type="submit" class="btn-biblio btn-primary-biblio">💾 Enregistrer</button>
+                <a asp-action="Details" asp-route-id="@livreId" class="btn-biblio btn-outline-biblio">Annuler</a>
+            </div>
+        </div>
+    </form>
+</div>

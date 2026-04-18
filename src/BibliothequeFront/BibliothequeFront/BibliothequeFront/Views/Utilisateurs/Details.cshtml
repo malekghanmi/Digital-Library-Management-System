@@ -1,0 +1,135 @@
+@model BibliothequeFront.Models.UtilisateurViewModel
+@{
+    ViewData["Title"] = Model.Prenom + " " + Model.Nom;
+    var emprunts = ViewBag.Emprunts as List<BibliothequeFront.Models.EmpruntViewModel> ?? new();
+}
+
+<div class="page-container">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour aux membres</a>
+    </div>
+
+    <div style="display:grid; grid-template-columns:320px 1fr; gap:2rem; align-items:start;">
+
+        <!-- Carte membre -->
+        <div class="detail-card">
+            <div style="background:linear-gradient(135deg, var(--dark-mid) 0%, var(--bordeaux) 100%); padding:3rem 2rem; text-align:center;">
+                <div style="width:80px;height:80px;border-radius:50%;background:rgba(201,168,76,0.15);border:2px solid var(--gold);display:flex;align-items:center;justify-content:center;margin:0 auto 1rem;font-size:2rem;">👤</div>
+                <div style="font-family:var(--font-display);font-size:1.3rem;color:var(--gold-light);letter-spacing:0.05em;">@Model.Prenom @Model.Nom</div>
+                <div style="font-family:var(--font-ui);font-size:0.7rem;letter-spacing:0.12em;text-transform:uppercase;color:rgba(255,255,255,0.5);margin-top:0.25rem;">@Model.Role</div>
+            </div>
+            <div class="detail-body" style="padding:1.5rem;">
+                @if (!string.IsNullOrEmpty(Model.Email))
+                {
+                    <div class="detail-field" style="grid-template-columns:100px 1fr;">
+                        <span class="detail-field-label">Email</span>
+                        <span class="detail-field-value" style="font-size:0.9rem; word-break:break-all;">@Model.Email</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Telephone))
+                {
+                    <div class="detail-field" style="grid-template-columns:100px 1fr;">
+                        <span class="detail-field-label">Tél.</span>
+                        <span class="detail-field-value">@Model.Telephone</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Adresse))
+                {
+                    <div class="detail-field" style="grid-template-columns:100px 1fr;">
+                        <span class="detail-field-label">Adresse</span>
+                        <span class="detail-field-value" style="font-size:0.9rem;">@Model.Adresse</span>
+                    </div>
+                }
+                <div class="detail-field" style="grid-template-columns:100px 1fr;">
+                    <span class="detail-field-label">Inscrit le</span>
+                    <span class="detail-field-value">@Model.DateInscription.ToString("dd/MM/yyyy")</span>
+                </div>
+                <div class="detail-field" style="grid-template-columns:100px 1fr;">
+                    <span class="detail-field-label">Emprunts</span>
+                    <span class="detail-field-value">
+                        @if (Model.NombreEmpruntsActifs > 0)
+                        {
+                            <span class="badge-biblio badge-statut-encours">@Model.NombreEmpruntsActifs en cours</span>
+                        }
+                        else
+                        {
+                            <span style="color:var(--taupe-light);">Aucun</span>
+                        }
+                    </span>
+                </div>
+
+                <div style="display:flex; gap:0.5rem; flex-wrap:wrap; margin-top:1.5rem; padding-top:1rem; border-top:1px solid rgba(201,168,76,0.15);">
+                    <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-biblio btn-gold-biblio btn-sm-biblio">✎ Modifier</a>
+                    <form asp-action="Delete" asp-route-id="@Model.Id" method="post" data-confirm="Supprimer ce membre ?">
+                        @Html.AntiForgeryToken()
+                        <button type="submit" class="btn-biblio btn-danger-biblio">Supprimer</button>
+                    </form>
+                </div>
+            </div>
+        </div>
+
+        <!-- Historique emprunts -->
+        <div>
+            <div class="section-header">
+                <h2 class="section-title">Historique <span>des emprunts</span></h2>
+                <a asp-controller="Emprunts" asp-action="Create" class="btn-biblio btn-primary-biblio btn-sm-biblio">+ Nouvel emprunt</a>
+            </div>
+
+            @if (emprunts.Any())
+            {
+                <div class="table-wrapper">
+                    <table class="table-biblio">
+                        <thead>
+                            <tr>
+                                <th>Livre</th>
+                                <th>Emprunté le</th>
+                                <th>Retour prévu</th>
+                                <th>Retour réel</th>
+                                <th>Statut</th>
+                                <th>Pénalité</th>
+                            </tr>
+                        </thead>
+                        <tbody>
+                            @foreach (var e in emprunts.OrderByDescending(x => x.DateEmprunt))
+                            {
+                                <tr>
+                                    <td>
+                                        <div style="font-weight:600; color:var(--dark);">@e.TitreLivre</div>
+                                        <div style="font-style:italic; color:var(--taupe); font-size:0.85rem;">@e.AuteurLivre</div>
+                                    </td>
+                                    <td style="font-size:0.85rem;">@e.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                                    <td style="font-size:0.85rem;">@e.DateRetourPrevue.ToString("dd/MM/yyyy")</td>
+                                    <td style="font-size:0.85rem;">@(e.DateRetourReelle?.ToString("dd/MM/yyyy") ?? "—")</td>
+                                    <td>
+                                        <span class="badge-biblio @(e.Statut == "EnCours" ? "badge-statut-encours" : e.Statut == "EnRetard" ? "badge-statut-retard" : "badge-statut-retourne")">
+                                            @e.Statut
+                                        </span>
+                                    </td>
+                                    <td style="font-size:0.85rem; color:var(--bordeaux);">
+                                        @(e.PenaliteRetard.HasValue ? e.PenaliteRetard.Value.ToString("F2") + " €" : "—")
+                                    </td>
+                                </tr>
+                            }
+                        </tbody>
+                    </table>
+                </div>
+            }
+            else
+            {
+                <div class="empty-state" style="padding:3rem 1rem;">
+                    <div class="empty-state-icon">🔖</div>
+                    <div class="empty-state-title">Aucun emprunt</div>
+                    <p class="empty-state-text">Ce membre n'a aucun emprunt enregistré.</p>
+                </div>
+            }
+        </div>
+    </div>
+</div>
+
+@section Scripts {
+<style>
+@@media (max-width: 900px) {
+    .detail-grid { grid-template-columns: 1fr !important; }
+}
+</style>
+}

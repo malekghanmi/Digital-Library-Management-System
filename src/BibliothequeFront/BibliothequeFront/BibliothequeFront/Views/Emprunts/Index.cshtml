@@ -1,0 +1,78 @@
+@model List<BibliothequeFront.Models.EmpruntViewModel>
+@{
+    ViewData["Title"] = "Gestion des Emprunts";
+}
+
+<div class="page-container">
+    <div class="section-header">
+        <h1 class="section-title">Suivi des <span>Emprunts</span></h1>
+        <a asp-action="Create" class="btn-biblio btn-primary-biblio">＋ Nouvel Emprunt</a>
+    </div>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="table-responsive" style="margin-top:2rem;">
+            <table class="table-biblio" style="width:100%; border-collapse:collapse;">
+                <thead>
+                    <tr style="background:var(--anthracite); color:white; text-align:left;">
+                        <th style="padding:1rem;">Livre</th>
+                        <th style="padding:1rem;">Emprunteur</th>
+                        <th style="padding:1rem;">Date Emprunt</th>
+                        <th style="padding:1rem;">Retour Prévu</th>
+                        <th style="padding:1rem;">Statut</th>
+                        <th style="padding:1rem;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var item in Model)
+                    {
+                        <tr style="border-bottom:1px solid rgba(201,168,76,0.1);">
+                            <td style="padding:1rem;">
+                                <strong>@item.TitreLivre</strong><br />
+                                <small style="color:var(--taupe);">@item.AuteurLivre</small>
+                            </td>
+                            <td style="padding:1rem;">@item.PrenomUtilisateur @item.NomUtilisateur</td>
+                            <td style="padding:1rem;">@item.DateEmprunt.ToString("dd/MM/yyyy")</td>
+                            <td style="padding:1rem;">@item.DateRetourPrevue.ToString("dd/MM/yyyy")</td>
+                            <td style="padding:1rem;">
+                                @if (item.DateRetourReelle.HasValue)
+                                {
+                                    <span class="badge-biblio badge-dispo">Retourné</span>
+                                }
+                                else if (item.Statut == "EnRetard")
+                                {
+                                    <span class="badge-biblio" style="background:#dc3545; color:white;">En retard</span>
+                                }
+                                else
+                                {
+                                    <span class="badge-biblio badge-gold-biblio">En cours</span>
+                                }
+                            </td>
+                            <td style="padding:1rem;">
+                                @if (!item.DateRetourReelle.HasValue)
+                                {
+                                    <form asp-action="Retour" asp-route-id="@item.Id" method="post" onsubmit="return confirm('Confirmer le retour de ce livre ?');">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-biblio btn-gold-biblio btn-sm-biblio">Rendre</button>
+                                    </form>
+                                }
+                                else if (item.PenaliteRetard > 0)
+                                {
+                                    <small style="color:#dc3545; font-weight:bold;">Pénalité: @item.PenaliteRetard €</small>
+                                }
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"></div>
+            <div class="empty-state-title">Aucun emprunt enregistré</div>
+            <p class="empty-state-text">Les activités d'emprunt apparaîtront ici.</p>
+        </div>
+    }
+</div>

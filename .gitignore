@@ -1,0 +1,28 @@
+## Visual Studio 2022/2025
+.vs/
+[Bb]in/
+[Oo]bj/
+*.user
+*.userosscache
+*.sln.doccache
+
+## Publish output
+/publish/
+
+## Database
+*.mdf
+*.ldf
+*.db
+
+## User-specific files
+.env
+appsettings.Development.json
+bin/
+obj/
+.vs/
+*.user
+*.suo
+appsettings.Development.json
+*.mdf
+*.ldf
+.DS_Store

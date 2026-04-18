@@ -1,0 +1,84 @@
+@* ===== INDEX ===== *@
+@model List<BibliothequeFront.Models.UtilisateurViewModel>
+@{
+    ViewData["Title"] = "Membres";
+}
+
+<div class="page-container">
+    <div class="section-header">
+        <h1 class="section-title">Gestion des <span>Membres</span></h1>
+        <a asp-action="Create" class="btn-biblio btn-primary-biblio">＋ Inscrire un membre</a>
+    </div>
+
+    <form method="get" class="filters-bar">
+        <div class="filter-group" style="flex:1;">
+            <label class="filter-label">Rechercher un membre</label>
+            <div class="search-container" style="max-width:100%; border-radius:4px;">
+                <input type="text" name="recherche" class="search-input" placeholder="Nom, prénom, email…" value="@ViewBag.Recherche" />
+            </div>
+        </div>
+        <button type="submit" class="btn-biblio btn-gold-biblio">Filtrer</button>
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio">Réinitialiser</a>
+    </form>
+
+    @if (Model.Any())
+    {
+        <div class="table-wrapper">
+            <table class="table-biblio">
+                <thead>
+                    <tr>
+                        <th>Nom & Prénom</th>
+                        <th>Email</th>
+                        <th>Téléphone</th>
+                        <th>Rôle</th>
+                        <th>Emprunts actifs</th>
+                        <th>Inscrit le</th>
+                        <th style="text-align:right;">Actions</th>
+                    </tr>
+                </thead>
+                <tbody>
+                    @foreach (var u in Model)
+                    {
+                        <tr>
+                            <td>
+                                <span style="font-family:var(--font-body); font-weight:600; color:var(--dark);">@u.Nom</span>
+                                <span style="font-family:var(--font-body); color:var(--taupe); margin-left:4px;">@u.Prenom</span>
+                            </td>
+                            <td style="font-family:var(--font-ui); font-size:0.85rem; color:var(--taupe);">@u.Email</td>
+                            <td style="font-family:var(--font-ui); font-size:0.85rem;">@(u.Telephone ?? "—")</td>
+                            <td>
+                                <span class="badge-biblio @(u.Role == "Admin" ? "badge-indispo" : u.Role == "Bibliothécaire" ? "badge-statut-encours" : "badge-genre")">@u.Role</span>
+                            </td>
+                            <td style="text-align:center;">
+                                @if (u.NombreEmpruntsActifs > 0)
+                                {
+                                    <span class="badge-biblio badge-statut-encours">@u.NombreEmpruntsActifs</span>
+                                }
+                                else { <span style="color:var(--taupe-light);">—</span> }
+                            </td>
+                            <td style="font-family:var(--font-ui); font-size:0.82rem; color:var(--taupe);">@u.DateInscription.ToString("dd/MM/yyyy")</td>
+                            <td style="text-align:right;">
+                                <div style="display:flex; gap:0.4rem; justify-content:flex-end;">
+                                    <a asp-action="Details" asp-route-id="@u.Id" class="btn-biblio btn-outline-biblio btn-sm-biblio">Détails</a>
+                                    <a asp-action="Edit" asp-route-id="@u.Id" class="btn-biblio btn-gold-biblio btn-sm-biblio">Modifier</a>
+                                    <form asp-action="Delete" asp-route-id="@u.Id" method="post" data-confirm="Supprimer ce membre ?">
+                                        @Html.AntiForgeryToken()
+                                        <button type="submit" class="btn-biblio btn-danger-biblio">✕</button>
+                                    </form>
+                                </div>
+                            </td>
+                        </tr>
+                    }
+                </tbody>
+            </table>
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon">👤</div>
+            <div class="empty-state-title">Aucun membre trouvé</div>
+            <p class="empty-state-text">Inscrivez un nouveau membre pour commencer.</p>
+        </div>
+    }
+</div>

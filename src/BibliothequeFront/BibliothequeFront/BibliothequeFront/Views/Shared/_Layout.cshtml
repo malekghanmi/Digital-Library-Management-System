@@ -1,0 +1,93 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+    <meta charset="utf-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>@ViewData["Title"] — Bibliothèque Numérique</title>
+    <link rel="preconnect" href="https://fonts.googleapis.com">
+    <link rel="preconnect" href="https://fonts.gstatic.com" crossorigin>
+    <link href="https://fonts.googleapis.com/css2?family=Cormorant+Garamond:ital,wght@0,300;0,400;0,600;1,300;1,400&family=Cinzel:wght@400;600&family=Lato:wght@300;400&display=swap" rel="stylesheet">
+    <link rel="stylesheet" href="~/css/bibliotheque.css" asp-append-version="true" />
+    @await RenderSectionAsync("Styles", required: false)
+</head>
+<body>
+
+<!-- ===== NAVBAR ===== -->
+<nav class="navbar-biblio">
+    <div style="max-width:1280px; margin:0 auto; display:flex; align-items:center; justify-content:space-between; flex-wrap:wrap; gap:0.5rem;">
+        
+        <a class="navbar-brand-biblio" asp-controller="Home" asp-action="Index">
+            
+            <span>Bibliotheca</span>
+        </a>
+
+        <div style="display:flex; align-items:center; gap:0.25rem; flex-wrap:wrap;">
+            <a class="nav-link-biblio" asp-controller="Home" asp-action="Index">
+                Accueil
+            </a>
+            <a class="nav-link-biblio" asp-controller="Livres" asp-action="Index">
+                Livres
+            </a>
+            <a class="nav-link-biblio" asp-controller="Articles" asp-action="Index">
+                 Articles
+            </a>
+            <a class="nav-link-biblio" asp-controller="Utilisateurs" asp-action="Index">
+                Membres
+            </a>
+            <a class="nav-link-biblio" asp-controller="Emprunts" asp-action="Index">
+                 Emprunts
+            </a>
+            <a class="nav-link-biblio" asp-controller="Recherche" asp-action="Index">
+                Recherche
+            </a>
+        </div>
+
+        <!-- Barre de recherche rapide -->
+        <form asp-controller="Recherche" asp-action="Index" method="get" style="display:flex;">
+            <div class="search-container" style="max-width:260px;">
+                <input type="text" name="q" class="search-input" placeholder="Rechercher…" value="@(ViewData["SearchQ"] ?? "")" />
+                <button type="submit" class="btn-biblio btn-gold-biblio" style="padding:0.45rem 1rem;">🔍</button>
+            </div>
+        </form>
+    </div>
+</nav>
+
+<!-- ===== MAIN CONTENT ===== -->
+<main>
+    <!-- Notifications -->
+    @if (TempData["Success"] != null)
+    {
+        <div class="page-container" style="padding-bottom:0;">
+            <div class="alert-biblio alert-success-biblio">
+                <span>✓</span> @TempData["Success"]
+            </div>
+        </div>
+    }
+    @if (TempData["Error"] != null)
+    {
+        <div class="page-container" style="padding-bottom:0;">
+            <div class="alert-biblio alert-error-biblio">
+                <span>✗</span> @TempData["Error"]
+            </div>
+        </div>
+    }
+
+    @RenderBody()
+</main>
+
+<!-- ===== FOOTER ===== -->
+<footer class="footer-biblio">
+    <p class="footer-text">
+        <span class="footer-gold">✦</span>
+        Bibliotheca Numerica — Système de Gestion de Bibliothèque
+        <span class="footer-gold">✦</span>
+        <br/>
+        <span style="opacity:0.5; font-size:0.65rem;">© @DateTime.Now.Year — Architecture API REST + ASP.NET Core MVC</span>
+    </p>
+</footer>
+
+<script src="~/js/bibliotheque.js" asp-append-version="true"></script>
+@await RenderSectionAsync("Scripts", required: false)
+
+</body>
+</html>

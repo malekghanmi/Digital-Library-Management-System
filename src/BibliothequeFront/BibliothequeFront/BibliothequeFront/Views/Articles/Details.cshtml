@@ -1,0 +1,86 @@
+@model BibliothequeFront.Models.ArticleViewModel
+@{
+    ViewData["Title"] = Model.Titre;
+}
+
+<div class="page-container">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour aux articles</a>
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-cover" style="height:200px; background:linear-gradient(135deg, #1A1410 0%, #1E3A5F 60%, #2C4A6B 100%);">
+            <span class="detail-cover-book" style="font-size:5rem;">📄</span>
+        </div>
+        <div class="detail-body">
+            <div style="margin-bottom:2rem;">
+                <h1 style="font-family:var(--font-display); font-size:1.8rem; font-weight:600; letter-spacing:0.04em; color:var(--dark); margin-bottom:0.5rem; line-height:1.3;">@Model.Titre</h1>
+                <p style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:1.1rem;">@Model.Auteur</p>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 2rem; margin-bottom:2rem;">
+                @if (!string.IsNullOrEmpty(Model.Revue))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Revue</span>
+                        <span class="detail-field-value">@Model.Revue</span>
+                    </div>
+                }
+                @if (Model.AnneePublication.HasValue)
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Année</span>
+                        <span class="detail-field-value">@Model.AnneePublication</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Domaine))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Domaine</span>
+                        <span class="detail-field-value"><span class="badge-biblio badge-genre">@Model.Domaine</span></span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.DOI))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">DOI</span>
+                        <span class="detail-field-value" style="font-family:var(--font-ui); font-size:0.85rem;">@Model.DOI</span>
+                    </div>
+                }
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.MotsCles))
+            {
+                <div style="margin-bottom:1.5rem;">
+                    <div class="detail-field-label" style="margin-bottom:0.5rem;">Mots-clés</div>
+                    <div style="display:flex; flex-wrap:wrap; gap:0.5rem;">
+                        @foreach (var mot in Model.MotsCles.Split(','))
+                        {
+                            <span class="badge-biblio badge-genre" style="font-size:0.78rem;">@mot.Trim()</span>
+                        }
+                    </div>
+                </div>
+            }
+
+            @if (!string.IsNullOrEmpty(Model.Resume))
+            {
+                <div style="border-top:1px solid rgba(201,168,76,0.15); padding-top:1.5rem; margin-bottom:2rem;">
+                    <div class="detail-field-label" style="margin-bottom:0.75rem;">Résumé</div>
+                    <p style="font-family:var(--font-body); font-size:1.05rem; color:var(--dark); line-height:1.8; font-style:italic;">@Model.Resume</p>
+                </div>
+            }
+
+            <div style="display:flex; gap:0.75rem; padding-top:1.5rem; border-top:1px solid rgba(201,168,76,0.15);">
+                @if (!string.IsNullOrEmpty(Model.LienAcces))
+                {
+                    <a href="@Model.LienAcces" target="_blank" class="btn-biblio btn-gold-biblio">🔗 Accéder à l'article</a>
+                }
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-biblio btn-outline-biblio">✎ Modifier</a>
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" data-confirm="Supprimer cet article ?" style="margin-left:auto;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-biblio btn-danger-biblio">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,107 @@
+﻿@model List<BibliothequeFront.Models.ArticleViewModel>
+@{
+    ViewData["Title"] = "Articles Scientifiques";
+    var domaines = ViewBag.Domaines as List<string> ?? new List<string>();
+    int page = ViewBag.Page ?? 1;
+    int pagePrecedente = page - 1;
+    int pageSuivante = page + 1;
+}
+
+<div class="page-container">
+    <div class="section-header">
+        <h1 class="section-title">Articles <span>Scientifiques</span></h1>
+        <a asp-action="Create" class="btn-biblio btn-primary-biblio">＋ Ajouter un article</a>
+    </div>
+
+    <!-- Filtres -->
+    <form method="get" class="filters-bar">
+        <div class="filter-group" style="flex:1; min-width:220px;">
+            <label class="filter-label">Rechercher</label>
+            <div class="search-container" style="max-width:100%; border-radius:4px;">
+                <input type="text" name="recherche" class="search-input" placeholder="Titre, auteur, mots-clés…" value="@ViewBag.Recherche" />
+            </div>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Domaine</label>
+            <select name="domaine" class="filter-select">
+                <option value="">Tous les domaines</option>
+                @foreach (var d in domaines)
+                {
+                    if (ViewBag.DomaineSelectionne == d)
+                    {
+                        <option value="@d" selected="selected">@d</option>
+                    }
+                    else
+                    {
+                        <option value="@d">@d</option>
+                    }
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn-biblio btn-gold-biblio">Filtrer</button>
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio">Réinitialiser</a>
+    </form>
+
+    @if (Model.Any())
+    {
+        <div class="content-grid">
+            @foreach (var a in Model)
+            {
+                <div class="item-card">
+                    <div class="item-card-cover" style="height:140px; background:linear-gradient(135deg, #1A1410 0%, #2C4A6B 100%);">
+                        <div class="item-card-cover-spine" style="background:linear-gradient(180deg,#C9A84C,#9B7B2F,#C9A84C);"></div>
+                    </div>
+                    <div class="item-card-body">
+                        <div class="item-card-title">@a.Titre</div>
+                        <div class="item-card-author">@a.Auteur</div>
+                        @if (!string.IsNullOrEmpty(a.Revue))
+                        {
+                            <div style="font-family:var(--font-ui); font-size:0.75rem; color:var(--taupe); margin-bottom:0.5rem; letter-spacing:0.04em;">
+                                @a.Revue @(a.AnneePublication.HasValue ? "(" + a.AnneePublication + ")" : "")
+                            </div>
+                        }
+                        <div class="item-card-meta">
+                            @if (!string.IsNullOrEmpty(a.Domaine))
+                            {
+                                <span class="badge-biblio badge-genre">@a.Domaine</span>
+                            }
+                        </div>
+                        @if (!string.IsNullOrEmpty(a.MotsCles))
+                        {
+                            <div style="font-family:var(--font-ui); font-size:0.72rem; color:var(--taupe-light); font-style:italic; margin-top:0.25rem;">
+                                🏷 @a.MotsCles
+                            </div>
+                        }
+                    </div>
+                    <div class="item-card-actions">
+                        <a asp-action="Details" asp-route-id="@a.Id" class="btn-biblio btn-outline-biblio btn-sm-biblio">Détails</a>
+                        <a asp-action="Edit" asp-route-id="@a.Id" class="btn-biblio btn-gold-biblio btn-sm-biblio">Modifier</a>
+                        <form asp-action="Delete" asp-route-id="@a.Id" method="post" data-confirm="Supprimer cet article ?" style="margin-left:auto;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-biblio btn-danger-biblio">✕</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="pagination-biblio">
+            @if (page > 1)
+            {
+                <a asp-action="Index" asp-route-page="@pagePrecedente" asp-route-recherche="@ViewBag.Recherche" class="page-btn">‹</a>
+            }
+            <span class="page-btn active">page</span>
+            @if (Model.Count >= 12)
+            {
+                <a asp-action="Index" asp-route-page="@pageSuivante" asp-route-recherche="@ViewBag.Recherche" class="page-btn">›</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-title">Aucun article trouvé</div>
+            <p class="empty-state-text">Ajoutez des articles scientifiques au catalogue.</p>
+        </div>
+    }
+</div>

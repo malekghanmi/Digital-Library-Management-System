@@ -1,0 +1,108 @@
+@model BibliothequeFront.Models.LivreViewModel
+@{
+    ViewData["Title"] = Model.Titre;
+}
+
+<div class="page-container">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour au catalogue</a>
+    </div>
+
+    <div class="detail-card">
+        <div class="detail-cover">
+            @if (!string.IsNullOrEmpty(Model.ImageCouverture))
+            {
+                <img src="@Model.ImageCouverture" alt="@Model.Titre" style="width:100%;height:100%;object-fit:cover;" />
+            }
+            else
+            {
+                <span class="detail-cover-book">📖</span>
+            }
+        </div>
+
+        <div class="detail-body">
+            <div style="display:flex; align-items:flex-start; justify-content:space-between; flex-wrap:wrap; gap:1rem; margin-bottom:2rem;">
+                <div>
+                    <h1 style="font-family:var(--font-display); font-size:2rem; font-weight:600; letter-spacing:0.05em; color:var(--dark); margin-bottom:0.25rem;">@Model.Titre</h1>
+                    <p style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:1.15rem;">@Model.Auteur</p>
+                </div>
+                <div style="display:flex; gap:0.75rem; flex-wrap:wrap;">
+                    @if (Model.ExemplairesDisponibles > 0)
+                    {
+                        <span class="badge-biblio badge-dispo" style="font-size:0.8rem; padding:0.4rem 1rem;">✓ @Model.ExemplairesDisponibles exemplaire(s) disponible(s)</span>
+                    }
+                    else
+                    {
+                        <span class="badge-biblio badge-indispo" style="font-size:0.8rem; padding:0.4rem 1rem;">✗ Indisponible</span>
+                    }
+                </div>
+            </div>
+
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:0 2rem; margin-bottom:2rem;">
+                @if (!string.IsNullOrEmpty(Model.ISBN))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">ISBN</span>
+                        <span class="detail-field-value">@Model.ISBN</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Editeur))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Éditeur</span>
+                        <span class="detail-field-value">@Model.Editeur</span>
+                    </div>
+                }
+                @if (Model.AnneePublication.HasValue)
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Année</span>
+                        <span class="detail-field-value">@Model.AnneePublication</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Genre))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Genre</span>
+                        <span class="detail-field-value">@Model.Genre</span>
+                    </div>
+                }
+                @if (!string.IsNullOrEmpty(Model.Categorie))
+                {
+                    <div class="detail-field">
+                        <span class="detail-field-label">Catégorie</span>
+                        <span class="detail-field-value">@Model.Categorie</span>
+                    </div>
+                }
+                <div class="detail-field">
+                    <span class="detail-field-label">Exemplaires</span>
+                    <span class="detail-field-value">@Model.ExemplairesDisponibles / @Model.NombreExemplaires</span>
+                </div>
+                <div class="detail-field">
+                    <span class="detail-field-label">Ajouté le</span>
+                    <span class="detail-field-value">@Model.DateAjout.ToString("dd MMMM yyyy")</span>
+                </div>
+            </div>
+
+            @if (!string.IsNullOrEmpty(Model.Description))
+            {
+                <div style="border-top:1px solid rgba(201,168,76,0.15); padding-top:1.5rem; margin-bottom:2rem;">
+                    <div class="detail-field-label" style="margin-bottom:0.75rem;">Résumé</div>
+                    <p style="font-family:var(--font-body); font-size:1.05rem; color:var(--dark); line-height:1.8; font-style:italic;">@Model.Description</p>
+                </div>
+            }
+
+            <div style="display:flex; gap:0.75rem; padding-top:1.5rem; border-top:1px solid rgba(201,168,76,0.15);">
+                <a asp-action="Edit" asp-route-id="@Model.Id" class="btn-biblio btn-gold-biblio">✎ Modifier</a>
+                @if (Model.ExemplairesDisponibles > 0)
+                {
+                    <a asp-controller="Emprunts" asp-action="Create" class="btn-biblio btn-primary-biblio">🔖 Enregistrer un emprunt</a>
+                }
+                <form asp-action="Delete" asp-route-id="@Model.Id" method="post" data-confirm="Supprimer définitivement ce livre ?" style="margin-left:auto;">
+                    @Html.AntiForgeryToken()
+                    <button type="submit" class="btn-biblio btn-danger-biblio">Supprimer</button>
+                </form>
+            </div>
+        </div>
+    </div>
+</div>

@@ -1,0 +1,81 @@
+@model BibliothequeFront.Models.CreateEmpruntViewModel
+@{
+    ViewData["Title"] = "Nouvel Emprunt";
+    var livres = ViewBag.Livres as List<BibliothequeFront.Models.LivreViewModel> ?? new();
+    var utilisateurs = ViewBag.Utilisateurs as List<BibliothequeFront.Models.UtilisateurViewModel> ?? new();
+}
+
+<div class="page-container" style="max-width:700px;">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour aux emprunts</a>
+    </div>
+
+    <div class="section-header">
+        <h1 class="section-title">Enregistrer un <span>Emprunt</span></h1>
+    </div>
+
+    @if (!livres.Any())
+    {
+        <div class="alert-biblio alert-info-biblio">
+            <span>ℹ</span> Aucun livre disponible actuellement. Tous les exemplaires sont empruntés.
+        </div>
+    }
+
+    <form asp-action="Create" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-card">
+
+            <div asp-validation-summary="ModelOnly" class="alert-biblio alert-error-biblio" style="display:@(ViewContext.ModelState.ErrorCount > 0 ? "flex" : "none")"></div>
+
+            <div class="form-group-biblio">
+                <label class="form-label-biblio">Livre à emprunter *</label>
+                <select asp-for="LivreId" class="filter-select form-control-biblio" required>
+                    <option value="">— Sélectionner un livre disponible —</option>
+                    @foreach (var l in livres)
+                    {
+                        <option value="@l.Id">@l.Titre — @l.Auteur (@l.ExemplairesDisponibles dispo.)</option>
+                    }
+                </select>
+                <span asp-validation-for="LivreId" class="text-danger" style="font-size:0.8rem;"></span>
+            </div>
+
+            <div class="form-group-biblio">
+                <label class="form-label-biblio">Membre emprunteur *</label>
+                <select asp-for="UtilisateurId" class="filter-select form-control-biblio" required>
+                    <option value="">— Sélectionner un membre —</option>
+                    @foreach (var u in utilisateurs)
+                    {
+                        <option value="@u.Id">@u.Nom @u.Prenom — @u.Email</option>
+                    }
+                </select>
+                <span asp-validation-for="UtilisateurId" class="text-danger" style="font-size:0.8rem;"></span>
+            </div>
+
+            <div class="form-group-biblio">
+                <label class="form-label-biblio">Date de retour prévue *</label>
+                <input asp-for="DateRetourPrevue" type="date" class="form-control-biblio" 
+                       min="@DateTime.Now.AddDays(1).ToString("yyyy-MM-dd")"
+                       value="@DateTime.Now.AddDays(14).ToString("yyyy-MM-dd")" required />
+                <span asp-validation-for="DateRetourPrevue" class="text-danger" style="font-size:0.8rem;"></span>
+                <small style="font-family:var(--font-ui); font-size:0.72rem; color:var(--taupe); margin-top:0.3rem; display:block;">Durée recommandée : 14 jours</small>
+            </div>
+
+            <div class="form-group-biblio">
+                <label class="form-label-biblio">Notes (optionnel)</label>
+                <textarea asp-for="Notes" class="form-control-biblio" rows="3" placeholder="Remarques particulières…"></textarea>
+            </div>
+
+            <div style="background:rgba(201,168,76,0.06); border:1px solid rgba(201,168,76,0.2); border-radius:var(--radius); padding:1rem 1.25rem; margin-bottom:1.5rem;">
+                <div style="font-family:var(--font-ui); font-size:0.7rem; letter-spacing:0.1em; text-transform:uppercase; color:var(--gold-dark); margin-bottom:0.5rem;">Information</div>
+                <p style="font-family:var(--font-body); font-style:italic; color:var(--taupe); font-size:0.9rem; margin:0;">
+                    Un retard entraîne une pénalité de <strong>0,50 € par jour</strong>. Le membre sera responsable du livre jusqu'à sa restitution.
+                </p>
+            </div>
+
+            <div style="display:flex; gap:0.75rem; padding-top:1rem; border-top:1px solid rgba(201,168,76,0.15);">
+                <button type="submit" class="btn-biblio btn-primary-biblio">🔖 Confirmer l'emprunt</button>
+                <a asp-action="Index" class="btn-biblio btn-outline-biblio">Annuler</a>
+            </div>
+        </div>
+    </form>
+</div>

@@ -1,0 +1,97 @@
+@model List<BibliothequeFront.Models.LivreViewModel>
+@{
+    ViewData["Title"] = "Catalogue des Livres";
+    var genres = ViewBag.Genres as List<string> ?? new();
+    int page = ViewBag.Page ?? 1;
+}
+
+<div class="page-container">
+    <div class="section-header">
+        <h1 class="section-title">Bibliothèque <span>Numérique</span></h1>
+        <a asp-action="Create" class="btn-biblio btn-primary-biblio">＋ Ajouter un livre</a>
+    </div>
+
+    <form method="get" class="filters-bar">
+        <div class="filter-group" style="flex:1; min-width:220px;">
+            <label class="filter-label">Rechercher</label>
+            <div class="search-container" style="max-width:100%; border-radius:4px;">
+                <input type="text" name="recherche" class="search-input" placeholder="Titre, auteur, ISBN…" value="@ViewBag.Recherche" />
+            </div>
+        </div>
+        <div class="filter-group">
+            <label class="filter-label">Genre</label>
+            <select name="genre" class="filter-select">
+                <option value="">Tous les genres</option>
+                @foreach (var g in genres)
+                {
+                    <!option value="@g" @(ViewBag.GenreSelectionne == g ? "selected" : "")>@g</!option>
+                }
+            </select>
+        </div>
+        <button type="submit" class="btn-biblio btn-gold-biblio">Filtrer</button>
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio">Réinitialiser</a>
+    </form>
+
+    @if (Model != null && Model.Any())
+    {
+        <div class="content-grid">
+            @foreach (var l in Model)
+            {
+                <div class="item-card">
+                    <div class="item-card-cover">
+                        @if (!string.IsNullOrEmpty(l.ImageCouverture))
+                        {
+                            <img src="@l.ImageCouverture" alt="@l.Titre" style="width:100%; height:100%; object-fit:cover;" />
+                        }
+                        else
+                        {
+                            <div class="item-card-cover-spine"></div>
+                            <span style="font-size:3rem;">📚</span>
+                        }
+                    </div>
+                    <div class="item-card-body">
+                        <div class="item-card-title">@l.Titre</div>
+                        <div class="item-card-author">par @l.Auteur</div>
+                        <div class="item-card-meta">
+                            @if (!string.IsNullOrEmpty(l.Genre))
+                            {
+                                <span class="badge-biblio badge-genre">@l.Genre</span>
+                            }
+                            <span class="badge-biblio @(l.NombreExemplaires > 0 ? "badge-dispo" : "badge-indispo")">
+                                @(l.NombreExemplaires > 0 ? "Disponible" : "Épuisé")
+                            </span>
+                        </div>
+                    </div>
+                    <div class="item-card-actions">
+                        <a asp-action="Details" asp-route-id="@l.Id" class="btn-biblio btn-outline-biblio btn-sm-biblio">Détails</a>
+                        <a asp-action="Edit" asp-route-id="@l.Id" class="btn-biblio btn-gold-biblio btn-sm-biblio">Modifier</a>
+                        <form asp-action="Delete" asp-route-id="@l.Id" method="post" onsubmit="return confirm('Supprimer ce livre ?');" style="margin-left:auto;">
+                            @Html.AntiForgeryToken()
+                            <button type="submit" class="btn-biblio btn-danger-biblio">✕</button>
+                        </form>
+                    </div>
+                </div>
+            }
+        </div>
+
+        <div class="pagination-biblio">
+            @if (page > 1)
+            {
+                <a asp-action="Index" asp-route-page="@(page-1)" asp-route-recherche="@ViewBag.Recherche" asp-route-genre="@ViewBag.GenreSelectionne" class="page-btn">‹</a>
+            }
+            <span class="page-btn active">@(page)</span>
+            @if (Model.Count >= 12)
+            {
+                <a asp-action="Index" asp-route-page="@(page+1)" asp-route-recherche="@ViewBag.Recherche" asp-route-genre="@ViewBag.GenreSelectionne" class="page-btn">›</a>
+            }
+        </div>
+    }
+    else
+    {
+        <div class="empty-state">
+            <div class="empty-state-icon"></div>
+            <div class="empty-state-title">Aucun livre trouvé</div>
+            <p class="empty-state-text">Essayez de modifier vos filtres ou d'ajouter un nouvel ouvrage.</p>
+        </div>
+    }
+</div>

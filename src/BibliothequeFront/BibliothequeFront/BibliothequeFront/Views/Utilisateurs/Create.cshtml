@@ -1,0 +1,68 @@
+@model BibliothequeFront.Models.CreateUtilisateurViewModel
+@{
+    bool isEdit = ViewBag.UtilisateurId != null;
+    ViewData["Title"] = isEdit ? "Modifier le Membre" : "Inscrire un Membre";
+    int uid = ViewBag.UtilisateurId ?? 0;
+}
+
+<div class="page-container" style="max-width:700px;">
+    <div style="margin-bottom:1.5rem;">
+        <a asp-action="Index" class="btn-biblio btn-outline-biblio btn-sm-biblio">← Retour aux membres</a>
+    </div>
+
+    <div class="section-header">
+        <h1 class="section-title">@(isEdit ? "Modifier le" : "Inscrire un") <span>Membre</span></h1>
+    </div>
+
+    <form asp-action="@(isEdit ? "Edit" : "Create")" asp-route-id="@(isEdit ? uid : 0)" method="post">
+        @Html.AntiForgeryToken()
+        <div class="form-card">
+            <div style="display:grid; grid-template-columns:1fr 1fr; gap:1.5rem;">
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Nom *</label>
+                    <input asp-for="Nom" class="form-control-biblio" required />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Prénom *</label>
+                    <input asp-for="Prenom" class="form-control-biblio" required />
+                </div>
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio">Email *</label>
+                    <input asp-for="Email" type="email" class="form-control-biblio" required />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Téléphone</label>
+                    <input asp-for="Telephone" class="form-control-biblio" placeholder="+216 xx xxx xxx" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Date de naissance</label>
+                    <input asp-for="DateNaissance" type="date" class="form-control-biblio" />
+                </div>
+                <div class="form-group-biblio" style="grid-column:1/-1;">
+                    <label class="form-label-biblio">Adresse</label>
+                    <input asp-for="Adresse" class="form-control-biblio" placeholder="Adresse complète" />
+                </div>
+                <div class="form-group-biblio">
+                    <label class="form-label-biblio">Rôle</label>
+                    <select asp-for="Role" class="filter-select form-control-biblio">
+                        <option value="Membre">Membre</option>
+                        <option value="Bibliothécaire">Bibliothécaire</option>
+                        <option value="Admin">Administrateur</option>
+                    </select>
+                </div>
+                @if (!isEdit)
+                {
+                    <div class="form-group-biblio">
+                        <label class="form-label-biblio">Mot de passe</label>
+                        <input asp-for="MotDePasse" type="password" class="form-control-biblio" placeholder="••••••••" />
+                    </div>
+                }
+            </div>
+
+            <div style="display:flex; gap:0.75rem; padding-top:1.5rem; border-top:1px solid rgba(201,168,76,0.15); margin-top:1rem;">
+                <button type="submit" class="btn-biblio btn-primary-biblio">@(isEdit ? "💾 Enregistrer" : "＋ Inscrire")</button>
+                <a asp-action="Index" class="btn-biblio btn-outline-biblio">Annuler</a>
+            </div>
+        </div>
+    </form>
+</div>
