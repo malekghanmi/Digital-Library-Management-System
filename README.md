@@ -493,22 +493,3 @@ FINAL TEST:
 
 ---
 
-<div align="center">
-
-<br/>
-
-```
-╔══════════════════════════════════════════╗
-║                                          ║
-║    ✦  Bibliotheca Numerica  ✦            ║
-║                                          ║
-║    REST Architecture · .NET 8            ║
-║    ASP.NET Core MVC · EF Core            ║
-║    SQL Server · Swagger UI               ║
-║                                          ║
-╚══════════════════════════════════════════╝
-```
-
-*Built with* ❤️ *— Academic Year 2025-2026*
-
-</div>
